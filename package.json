@@ -1,0 +1,11 @@
+{
+  "name": "layout",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "main": "node index.js"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
+  }
+}
