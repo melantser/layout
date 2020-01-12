@@ -70,6 +70,7 @@ class Graph {
   constructor() {
     this.referrers = new Map();
     this.nodes = new Map();
+    this.edges = new Map();
   }
 
   layout(options) {
@@ -108,7 +109,16 @@ class Graph {
         grid.add([i, bestCol], {node: true});
 
         for (const referrer of this.getNodeReferrers(nodeId)) {
-          grid.fill(this.getNode(referrer).pos, [i, bestCol]);
+          const referrerPos = this.getNode(referrer).pos;
+          grid.fill(referrerPos, [i, bestCol]);
+
+          if (i === referrerPos[0] + 1) {
+            this.setEdgeData(referrer, nodeId, {anchors: ['Bottom', 'Top']});
+          } else if (bestCol > referrerPos[1]) {
+            this.setEdgeData(referrer, nodeId, {anchors: ['Right', 'Top']});
+          } else {
+            this.setEdgeData(referrer, nodeId, {anchors: ['Left', 'Top']});
+          }
         }
       }
     }
@@ -144,8 +154,7 @@ class Graph {
   }
 
   setNodeData(nodeId, data) {
-    const ref = this.nodes.get(nodeId);
-    Object.assign(ref, data, {id: nodeId});
+    Object.assign(this.nodes.get(nodeId), data, {id: nodeId});
   }
 
   getNode(nodeId) {
@@ -154,6 +163,15 @@ class Graph {
 
   addEdge(from, to) {
     setDefault(this.referrers, to, new Set()).add(from);
+    setDefault(setDefault(this.edges, from, new Map()), to, {from: from, to: to});
+  }
+
+  setEdgeData(from, to, data) {
+    Object.assign(this.edges.get(from).get(to), data, {from: from, to: to});
+  }
+
+  getEdge(from, to) {
+    return this.edges.get(from).get(to);
   }
 
   getNodeReferrers(nodeId) {
@@ -276,4 +294,3 @@ g.addEdge('3', '5');
 g.addEdge('3', null);
 g.addEdge('4', null);
 g.layout({marginX: 30, marginY: 30});
-console.log(g.nodes);
