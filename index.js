@@ -69,7 +69,7 @@ class Graph {
 
   constructor() {
     this.referrers = new Map();
-    this.nodes = new Map()
+    this.nodes = new Map();
   }
 
   layout(options) {
